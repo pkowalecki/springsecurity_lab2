@@ -61,16 +61,21 @@ public class UserService {
 
 
     public void verifyToken(String token){
-        AppUser appUser = verificationTokenRepo.findByValue(token).getAppUser();
+        VerificationToken verificationToken = verificationTokenRepo.findByValue(token);
+        AppUser appUser = verificationToken.getAppUser();
         appUser.setEnabled(true);
+        System.out.print("Przed verifyUser " + appUser);
         appUser.setRole("ROLE_USER");
+        System.out.print("Po" + appUser);
         appUserRepo.save(appUser);
     }
 
     public void verifyAdminToken(String token){
-    AppUser appUser = verificationTokenRepo.findByValue(token).getAppUser();
-    appUser.setEnabled(true);
-    appUser.setRole("ROLE_ADMIN");
-    appUserRepo.save(appUser);
+        VerificationToken verificationToken = verificationTokenRepo.findByValue(token);
+        AppUser appUser = verificationToken.getAppUser();
+        System.out.print("Przed verifyAdmin " + appUser);
+        appUser.setRole("ROLE_ADMIN");
+        System.out.print("Po " + appUser);
+        appUserRepo.save(appUser);
     }
 }

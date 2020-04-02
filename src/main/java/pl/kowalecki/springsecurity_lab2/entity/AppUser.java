@@ -85,5 +85,14 @@ public class AppUser implements UserDetails {
         this.password = password;
     }
 
-
+    @Override
+    public String toString() {
+        return "AppUser{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", role='" + role + '\'' +
+                ", isEnabled=" + isEnabled +
+                '}';
+    }
 }
