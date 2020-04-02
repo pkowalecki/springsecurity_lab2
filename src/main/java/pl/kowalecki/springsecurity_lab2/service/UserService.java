@@ -4,7 +4,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import pl.kowalecki.springsecurity_lab2.entity.AppUser;
 import pl.kowalecki.springsecurity_lab2.entity.VerificationToken;
+import pl.kowalecki.springsecurity_lab2.entity.VerificationTokenAdmin;
 import pl.kowalecki.springsecurity_lab2.repo.AppUserRepo;
+import pl.kowalecki.springsecurity_lab2.repo.VerificationTokenAdminRepo;
 import pl.kowalecki.springsecurity_lab2.repo.VerificationTokenRepo;
 
 import javax.mail.MessagingException;
@@ -17,12 +19,14 @@ public class UserService {
     private AppUserRepo appUserRepo;
     private PasswordEncoder passwordEncoder;
     private VerificationTokenRepo verificationTokenRepo;
+    private VerificationTokenAdminRepo verificationTokenAdminRepo;
     private MailSenderService mailSenderService;
 
-    public UserService(AppUserRepo appUserRepo, PasswordEncoder passwordEncoder, VerificationTokenRepo verificationTokenRepo, MailSenderService mailSenderService) {
+    public UserService(AppUserRepo appUserRepo, PasswordEncoder passwordEncoder, VerificationTokenRepo verificationTokenRepo, MailSenderService mailSenderService, VerificationTokenAdminRepo verificationTokenAdminRepo) {
         this.appUserRepo = appUserRepo;
         this.passwordEncoder = passwordEncoder;
         this.verificationTokenRepo = verificationTokenRepo;
+        this.verificationTokenAdminRepo = verificationTokenAdminRepo;
         this.mailSenderService = mailSenderService;
     }
 
@@ -46,13 +50,13 @@ public class UserService {
 
     public void addNewAdmin(AppUser user, HttpServletRequest request) throws MessagingException {
         String token = UUID.randomUUID().toString();
-        VerificationToken verificationToken = new VerificationToken(user, token);
-        verificationTokenRepo.save(verificationToken);
+        VerificationTokenAdmin verificationTokenAdmin = new VerificationTokenAdmin(user, token);
+        verificationTokenAdminRepo.save(verificationTokenAdmin);
 
         String url = request.getServerName() + ":" +
                 request.getServerPort() +
                 request.getContextPath() +
-                "/verify-token?token=" + token;
+                "/verify-admin?token=" + token;
 
             mailSenderService.sendMail("kowalecki13pl@o2.pl", "Admin request:" + user.getUsername(), url,false);
 
@@ -71,8 +75,8 @@ public class UserService {
     }
 
     public void verifyAdminToken(String token){
-        VerificationToken verificationToken = verificationTokenRepo.findByValue(token);
-        AppUser appUser = verificationToken.getAppUser();
+        VerificationTokenAdmin verificationTokenAdmin = verificationTokenAdminRepo.findByValue(token);
+        AppUser appUser = verificationTokenAdmin.getAppUser();
         System.out.print("Przed verifyAdmin " + appUser);
         appUser.setRole("ROLE_ADMIN");
         System.out.print("Po " + appUser);
