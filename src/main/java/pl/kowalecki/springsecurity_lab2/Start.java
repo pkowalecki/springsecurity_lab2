@@ -2,6 +2,7 @@ package pl.kowalecki.springsecurity_lab2;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -24,7 +25,7 @@ public class Start {
         if (appUserRepo.findAllByUsername("kowalecki13pl@o2.pl") == null){
         AppUser superAdmin = new AppUser();
             superAdmin.setUsername("kowalecki13pl@o2.pl");
-            superAdmin.setPassword(passwordEncoder.encode("admin"));
+            superAdmin.setPassword(passwordEncoder.encode("123456789"));
             superAdmin.setRole("ROLE_ADMIN");
             superAdmin.setEnabled(true);
         appUserRepo.save(superAdmin);

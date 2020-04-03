@@ -1,6 +1,9 @@
 package pl.kowalecki.springsecurity_lab2.controller;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
@@ -9,6 +12,7 @@ import pl.kowalecki.springsecurity_lab2.service.UserService;
 
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 @Controller
 public class MainController {
@@ -26,18 +30,19 @@ public class MainController {
     }
 
     @RequestMapping("/signUp")
-    public ModelAndView signUp(){
-
-        return new ModelAndView("registration", "user", new AppUser());
+    public String signUp(Model model){
+        model.addAttribute("appUser", new AppUser());
+        return "registration";
     }
 
     @RequestMapping("/register")
-    public ModelAndView register(AppUser user, HttpServletRequest request,
-                                 @RequestParam(defaultValue = "false")boolean adminCheckBox) throws MessagingException {
+    public String register(@Valid @ModelAttribute AppUser user, HttpServletRequest request, BindingResult bindingResult,
+                           @RequestParam(defaultValue = "false")boolean adminCheckBox) throws MessagingException {
 
+        if(bindingResult.hasErrors()){return "redirect:/signUp";}
         userService.addNewUser(user, request);
         if(adminCheckBox) userService.addNewAdmin(user,request);
-        return new ModelAndView("redirect:/login");
+        return "redirect:/login";
     }
 
     @RequestMapping("/verify-token")
